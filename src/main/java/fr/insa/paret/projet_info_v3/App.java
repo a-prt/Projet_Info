@@ -39,23 +39,13 @@ public class App extends Application {
         button1.setOnAction(e -> clearCanvas());
 
         Button button2 = new Button("Creation de piece");
-        button2.setOnAction(e -> openInputWindow());
+        button2.setOnAction(e -> CreaPiece());
         
-        Button zoomInButton = new Button("Zoom In");
-        zoomInButton.setOnAction(e -> zoomCanvas(1.2));
-
-        Button zoomOutButton = new Button("Zoom Out");
-        zoomOutButton.setOnAction(e -> zoomCanvas(0.8));
-
         Button button3 = new Button("Button 3");
-        
-        HBox zoomButtons = new HBox(10, zoomInButton, zoomOutButton);
-        zoomButtons.setAlignment(Pos.CENTER);
-        VBox canvasWithZoom = new VBox(10, zoomButtons, scrollPane);
 
         VBox buttons = new VBox(10, button1, button2, button3);
         buttons.setAlignment(Pos.CENTER);
-        HBox root = new HBox(10, canvasWithZoom, buttons);
+        HBox root = new HBox(10, canvas, buttons);
         root.setPadding(new Insets(10));
 
         Scene scene = new Scene(root, 600, 450);
@@ -67,7 +57,7 @@ public class App extends Application {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    private void openInputWindow() {
+    private void CreaPiece() {
         Stage inputStage = new Stage();
         inputStage.setTitle("Enter les Coordonnes");
 
@@ -104,6 +94,7 @@ public class App extends Application {
                 double y1 = Double.parseDouble(inputY1.getText());
                 double x2 = Double.parseDouble(inputX2.getText());
                 double y2 = Double.parseDouble(inputY2.getText());
+                //choix revetement
                 MakeRoom(x1, y1, x2, y2);
                 inputStage.close();
             } catch (NumberFormatException ex) {
