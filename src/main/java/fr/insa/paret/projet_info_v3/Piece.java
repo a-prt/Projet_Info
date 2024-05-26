@@ -15,12 +15,14 @@ public class Piece {
     Sol sol;
     Plafond plafond;
     List<Mur> listeMurs;
+    Appartement appartement;
     
-    public Piece(int idPiece, List<Mur> listeMurs, Sol sol, Plafond plafond) {
+    public Piece(int idPiece, List<Mur> listeMurs, Sol sol, Plafond plafond, Appartement appartement) {
         this.idPiece= idPiece;
         this.listeMurs=listeMurs;
         this.sol=sol;
         this.plafond=plafond;
+        this.appartement= appartement;
     }
     
     public int getIdPiece() {
@@ -36,6 +38,10 @@ public class Piece {
     public List<Mur> getListeMurs() {
     return listeMurs;
     }
+       public Appartement getAppartement() {
+        return appartement;
+    }
+
     public void setSol(Sol sol) {
         this.sol = sol;
     }
@@ -48,6 +54,9 @@ public class Piece {
     
     public void setListeMurs(List<Mur> listeMurs) {
         this.listeMurs = listeMurs;
+    }
+        public void setAppartement (Appartement appartement){
+        this.appartement= appartement;
     }
     
     public double surface(){
@@ -88,9 +97,15 @@ public class Piece {
  public String toString() { 
         StringBuilder sb = new StringBuilder(); 
         sb.append("Piece");
-        sb.append(";").append(appartement.getIdAppartement()).append("");
+        sb.append(";").append(appartement.getIdAppartement());
         sb.append(";").append(getIdPiece());
-        sb.append(";").append("2,5");
+        sb.append(";").append(sol.getIdSol());
+        sb.append(";").append(plafond.getIdPlafond());
+        if (listeMurs!=null){
+            for(Mur mur : listeMurs){
+                sb.append(";").append(mur.getIdMur());
+            }
+        }
         return sb.toString();
     }
     

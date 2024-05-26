@@ -71,6 +71,16 @@ public void setListeRevetements(List<Revetement> listeRevetements) {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Sol").append(idSol).append(":");
+        if (listeCoins!=null){
+            for(Coin coin : listeCoins){
+                sb.append(";").append(coin.getIdCoin());
+            }
+        }
+        if (listeRevetements!=null){
+            for(Revetement revetement : listeRevetements){
+                sb.append(";").append(revetement.getIdRevetement());
+            }
+        }
         return sb.toString();
     }
     

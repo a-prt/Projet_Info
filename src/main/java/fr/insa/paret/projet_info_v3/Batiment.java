@@ -69,6 +69,11 @@ public class Batiment{
         StringBuilder sb = new StringBuilder(); 
         sb.append("Batiment");
         sb.append(";").append(getIdBatiment());
+        if (listeNiveaux!=null){
+            for(Niveau niveau : listeNiveaux){
+                sb.append(";").append(niveau.getIdNiveau());
+            }
+        }
         return sb.toString();
     }
 }

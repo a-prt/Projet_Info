@@ -77,6 +77,11 @@ public class Appartement {
         sb.append("Appartement");
         sb.append(";").append(getIdAppartement());
         sb.append(";").append(getIdNiveauAppartement());
+        if (listePieces!=null){
+            for(Piece piece : listePieces){
+                sb.append(";").append(piece.getIdPiece());
+            }
+        }
         return sb.toString();
     }
 }

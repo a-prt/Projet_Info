@@ -70,6 +70,11 @@ public class Niveau {
         sb.append("Niveau");
         sb.append(";").append(getIdNiveau());
         sb.append(";").append("2,5");
+        if (listeApparts!=null){
+            for(Appartement appartement : listeApparts){
+                sb.append(";").append(appartement.getIdAppartement());
+            }
+        }
         return sb.toString();
     }
 }

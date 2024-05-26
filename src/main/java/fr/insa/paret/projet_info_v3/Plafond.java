@@ -63,6 +63,16 @@ public double montantRevetement(){
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Plafond").append(idPlafond).append(":");
+        if (listeCoins!=null){
+            for(Coin coin : listeCoins){
+                sb.append(";").append(coin.getIdCoin());
+            }
+        }
+        if (listeRevetements!=null){
+            for(Revetement revetement : listeRevetements){
+                sb.append(";").append(revetement.getIdRevetement());
+            }
+        }
         return sb.toString();
     }
     
