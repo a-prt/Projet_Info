@@ -58,8 +58,7 @@ public class Couloir {
     public double surface() {
         double longueur = Math.abs(coinFin.getCx() - coinDebut.getCx());
         double largeur = Math.abs(coinFin.getCy() - coinDebut.getCy());
-        double hauteur = 2.5; // Hauteur fixe pour le couloir
-        return longueur * largeur * hauteur;
+        return longueur * largeur;
     }
 
     public double montantRevetement() {

@@ -16,6 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class App extends Application {
     private Canvas canvas;
@@ -146,6 +149,41 @@ public class App extends Application {
         // Add your redraw logic here if needed, for example:
         // drawRectangle(...); // Call to a method that redraws the existing shapes
     }
+    
+        public static void Fichierbatiment (Batiment batiment) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("batiment.txt"))) {
+            writer.write(batiment.toString());
+            writer.newLine();
+
+            for (Niveau niveau : batiment.getListeNiveaux()) {
+                writer.write(niveau.toString());
+                writer.newLine();
+
+                for (Appartement appartement : niveau.getListeApparts()) {
+                    writer.write(appartement.toString());
+                    writer.newLine();
+
+                    for (Piece piece : appartement.getListePieces()) {
+                        writer.write(piece.toString());
+                        writer.newLine();
+
+                        for (Mur mur : piece.getListeMurs()) {
+                            writer.write(mur.toString());
+                            writer.newLine();
+                        }
+
+                        writer.write(piece.getSol().toString());
+                        writer.newLine();
+                        writer.write(piece.getPlafond().toString());
+                        writer.newLine();
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        }
 
 
 /*
@@ -270,4 +308,4 @@ public class App extends Application {
     }
 
 */
-}
+        }
