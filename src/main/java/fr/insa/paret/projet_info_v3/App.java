@@ -1,5 +1,6 @@
 package fr.insa.paret.projet_info_v3;
 
+import java.io.BufferedReader;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +19,10 @@ import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App extends Application {
     private Canvas canvas;
@@ -62,7 +66,7 @@ public class App extends Application {
 
     private void CreaPiece() {
         Stage inputStage = new Stage();
-        inputStage.setTitle("Enter les Coordonnes");
+        inputStage.setTitle("Entrer les Coordonnes");
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
@@ -136,6 +140,33 @@ public class App extends Application {
         // il faut crée les coin avec les coords (x1, y1) etc et les murs
         
        
+    }
+     private void recup(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader("nomfichier.txt"))) {
+            String line;
+            List<Double[]> coords = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 4 && parts[0].equals("Coin")) {
+                    try {
+                        double cx = Double.parseDouble(parts[2]);
+                        double cy = Double.parseDouble(parts[3]);
+                        coords.add(new Double[]{cx, cy});
+                    } catch (NumberFormatException e) {
+                        // Handle parse error
+                        System.out.println("Erreur de format dans le fichier : " + line);
+                    }
+                }
+            }
+            for (int i = 0; i < coords.size() - 1; i += 2) {
+                Double[] coin1 = coords.get(i);
+                Double[] coin2 = coords.get(i + 1);
+                MakeRoom(coin1[0], coin1[1], coin2[0], coin2[1]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     private void zoomCanvas(double factor) {
         scale *= factor;
