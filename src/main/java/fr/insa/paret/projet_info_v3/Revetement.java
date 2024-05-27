@@ -105,6 +105,23 @@ public class Revetement {
             while ((line = br.readLine()) != null) {
                 String[] t = line.split(";");
                 if (t.length == 6 && t[2].equals("1")) {
+                    String nomRevetement = "\"" + t[1] + "\"";
+                    revetementsPourMur.add(nomRevetement);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return revetementsPourMur;
+    }
+    
+       public static List<String> getRevetementsPourSol() {
+        List<String> revetementsPourMur = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] t = line.split(";");
+                if (t.length == 6 && t[2].equals("1")) {
                     String nom = t[1];
                     revetementsPourMur.add(nom);
                 }
