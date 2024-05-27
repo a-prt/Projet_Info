@@ -103,9 +103,9 @@ public class Revetement {
         try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 6 && parts[2].equals("1")) {
-                    String nom = parts[1];
+                String[] t = line.split(";");
+                if (t.length == 6 && t[2].equals("1")) {
+                    String nom = t[1];
                     revetementsPourMur.add(nom);
                 }
             }
