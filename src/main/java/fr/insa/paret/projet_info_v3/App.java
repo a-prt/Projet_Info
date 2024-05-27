@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -30,7 +29,6 @@ import javafx.scene.text.Text;
 public class App extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
-    private double scale = 1.0;
     private boolean topSelected = false;
     private boolean rightSelected = false;
     private boolean bottomSelected = false;
@@ -176,18 +174,6 @@ public class App extends Application {
             e.printStackTrace();
         }
 
-    }
-    private void zoomCanvas(double factor) {
-        scale *= factor;
-        gc.scale(factor, factor);
-        redrawCanvas();
-    }
-
-    private void redrawCanvas() {
-        // Clear and redraw canvas content as needed (example with dots)
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        // Add your redraw logic here if needed, for example:
-        // drawRectangle(...); // Call to a method that redraws the existing shapes
     }
     
         public static void Fichierbatiment (Batiment batiment) {
