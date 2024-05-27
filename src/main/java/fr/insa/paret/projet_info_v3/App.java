@@ -49,6 +49,7 @@ public class App extends Application {
         button2.setOnAction(e -> CreaPiece());
         
         Button button3 = new Button("Button 3");
+        button3.setOnAction(e -> Recup());
 
         VBox buttons = new VBox(10, button1, button2, button3);
         buttons.setAlignment(Pos.CENTER);
@@ -141,8 +142,8 @@ public class App extends Application {
         
        
     }
-     private void recup(String filename) {
-        try (BufferedReader br = new BufferedReader(new FileReader("nomfichier.txt"))) {
+     private void Recup() {
+        try (BufferedReader br = new BufferedReader(new FileReader("batiment.txt"))) {
             String line;
             List<Double[]> coords = new ArrayList<>();
             while ((line = br.readLine()) != null) {
