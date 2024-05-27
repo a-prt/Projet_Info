@@ -320,7 +320,7 @@ public class App extends Application {
             }
         });
 
-        VBox choix = new VBox(10, nbport, inputPorte, nbfen, inputFenetre, errorLabel, rev, fin);
+        VBox choix = new VBox(10, nbport, inputPorte, nbfen, inputFenetre, errorLabel, Rev, rev, fin);
         choix.setAlignment(Pos.CENTER);
         choix.setPadding(new Insets(20));
 
