@@ -10,6 +10,9 @@ package fr.insa.paret.projet_info_v3;
  */
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Revetement {
     private int idRevetement;
@@ -93,5 +96,22 @@ public class Revetement {
     }catch (Exception e){
                 e.printStackTrace();
     }
+    }
+
+    public static List<String> getRevetementsPourMur() {
+        List<String> revetementsPourMur = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 6 && parts[2].equals("1")) {
+                    String nom = parts[1];
+                    revetementsPourMur.add(nom);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return revetementsPourMur;
     }
 }
