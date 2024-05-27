@@ -115,20 +115,39 @@ public class Revetement {
         return revetementsPourMur;
     }
     
-       public static List<String> getRevetementsPourSol() {
-        List<String> revetementsPourMur = new ArrayList<>();
+        public static List<String> getRevetementsPourSol() {
+        List<String> revetementsPourSol = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] t = line.split(";");
-                if (t.length == 6 && t[2].equals("1")) {
-                    String nom = t[1];
-                    revetementsPourMur.add(nom);
+                if (t.length == 6 && t[3].equals("1")) {
+                    String nomRevetement = "\"" + t[1] + "\"";
+                    revetementsPourSol.add(nomRevetement);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return revetementsPourMur;
+        return revetementsPourSol;
+        }
+            
+        public static List<String> getRevetementsPourPlafond() {
+        List<String> revetementsPourPlafond = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] t = line.split(";");
+                if (t.length == 6 && t[4].equals("1")) {
+                    String nomRevetement = "\"" + t[1] + "\"";
+                    revetementsPourPlafond.add(nomRevetement);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return revetementsPourPlafond;
     }
+        
 }
+    
