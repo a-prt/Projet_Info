@@ -125,12 +125,19 @@ public class App extends Application {
     }
 
     private void MakeRoom(double x1, double y1, double x2, double y2) {
-        
+        int idcoin=0;
         double x3 = x1;
         double y3 = y2;
         double x4 = x2;
         double y4 = y1;
-
+       /* Coin coin = new Coin(idcoin, x1, y1);
+        try {
+            BufferedWriter bw=new BufferedWriter(new FileWriter("batiment.txt"));
+        }
+        catch(Expection e){
+            e.printStackTrace();
+        }
+*/
         gc.setFill(Color.RED);
         gc.fillOval(x1 - 2.5, y1 - 2.5, 5, 5);
         gc.fillOval(x2 - 2.5, y2 - 2.5, 5, 5);
