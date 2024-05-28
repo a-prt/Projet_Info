@@ -111,7 +111,7 @@ public class App extends Application {
                 MakeRoom(x1, y1, x2, y2);
                 inputStage.close();
             } catch (NumberFormatException ex) {
-                // Handle invalid input
+                // Gere les mauvaises saisies 
             }
             Choixmurs();
         });
@@ -214,27 +214,27 @@ public class App extends Application {
         Stage squareStage = new Stage();
         squareStage.setTitle("Square Window");
 
-        // Create Canvas and GraphicsContext for drawing
+        // Creer un Canvas et un GraphicsContext pour dessiner
         Canvas canvas = new Canvas(100, 100);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // Draw initial square
+        // dessin un carré de base
         drawSquare(gc);
         
-        //Name the sides of the square
+        //Nommes les côtés du carré
         Text Side1 = new Text("1");
         Text Side2 = new Text("4");
         Text Side3 = new Text("2");
         Text Side4 = new Text("3");
         
-        //place the name with the coresponding side
+        //associe le bon nom a chaque côté du carré
         VBox vertsquare = new VBox (10,Side1, canvas, Side4);
         vertsquare.setAlignment(Pos.CENTER);
         HBox totsquare = new HBox (10, Side2, vertsquare, Side3);
         totsquare.setAlignment(Pos.CENTER);
 
-        // Text and CheckBoxes
-        Text instructionText = new Text("Select sides to turn black:");
+        // Texte and CheckBoxes
+        Text instructionText = new Text("Saisisser les informations sur les murs:");
         CheckBox side1 = new CheckBox("1");
         CheckBox side2 = new CheckBox("2");
         CheckBox side3 = new CheckBox("3");
@@ -265,7 +265,7 @@ public class App extends Application {
         checkboxes.setAlignment(Pos.CENTER_LEFT);
         checkboxes.setPadding(new Insets(20));
 
-        // Submit button to close the window
+        // Bouton pour fermer la fenetre
         Button submitButton = new Button("Valider");
         submitButton.setOnAction(e -> squareStage.close());
 
