@@ -154,14 +154,17 @@ public class App extends Application {
     }
     public void sauvgardecoin(double x, double y){
         int nbcoin=1;
-    try (BufferedWriter bw=new BufferedWriter(new FileWriter("Batiment.txt"))){
-            bw.write("Coin;"+nbcoin+";"+x+";"+y);
-            bw.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-    }
+     try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
+         bw.write("Coin;"+nbcoin+";"+x+";"+y+"\n");
+         bw.close();
+     }catch (IOException e){
+         e.printStackTrace();
+     }
+}
+     public void sauvgardemur(int a, int b, int rev){
+     
+}
+    
      private void Recup() {
         try (BufferedReader br = new BufferedReader(new FileReader("batiment.txt"))) {
             String line;
@@ -190,7 +193,7 @@ public class App extends Application {
 
     }
     
-        public static void Fichierbatiment (Batiment batiment) {
+       /* public static void Fichierbatiment (Batiment batiment) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("batiment.txt"))) {
             writer.write(batiment.toString());
             writer.newLine();
@@ -224,6 +227,7 @@ public class App extends Application {
             e.printStackTrace();
         }
     }
+     */
         private void Choixmurs() {
         Stage squareStage = new Stage();
         squareStage.setTitle("Square Window");
