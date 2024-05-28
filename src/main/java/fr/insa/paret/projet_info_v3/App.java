@@ -246,7 +246,8 @@ public class App extends Application {
         CheckBox side2 = new CheckBox("2");
         CheckBox side3 = new CheckBox("3");
         CheckBox side4 = new CheckBox("4");
-
+        CheckBox sol = new CheckBox("Sol");
+        CheckBox plafond = new CheckBox("Plafond");
         side1.setOnAction(e -> {
             topSelected = side1.isSelected();
             drawSquare(gc);
@@ -267,8 +268,14 @@ public class App extends Application {
             drawSquare(gc);
             DemandePorteFen();
         });
-
-        VBox checkboxes = new VBox(10, instructionText, side1, side2, side3, side4);
+        sol.setOnAction(e -> {
+            revsol();
+        });
+        plafond.setOnAction(e -> {
+            revplaf();
+        });
+        
+        VBox checkboxes = new VBox(10, instructionText, side1, side2, side3, side4, sol, plafond);
         checkboxes.setAlignment(Pos.CENTER_LEFT);
         checkboxes.setPadding(new Insets(20));
 
@@ -320,6 +327,74 @@ public class App extends Application {
         return revetementsPourMur;
     }
 */
+    public void revsol(){
+    // Create a new Stage (window)
+        Stage newWindow = new Stage();
+        newWindow.setTitle("revetement pour pour sol");
+           // instruction
+        Label instruction = new Label("revetement pour pour le sol");
+        // Create a ChoiceBox and add some choices
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll("Choice 1", "Choice 2", "Choice 3");
+
+        // Create a Button to close the new window
+        Button closeButton = new Button("Valide");
+        closeButton.setOnAction(event -> newWindow.close());
+
+        // Center the close button using an HBox
+        HBox hbox = new HBox(closeButton);
+        hbox.setAlignment(Pos.CENTER);
+
+        // Layout for the new window
+        VBox vbox = new VBox(instruction, choiceBox, hbox);
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
+
+        // Set the Scene for the new window
+        Scene scene = new Scene(vbox, 200, 150);
+        newWindow.setScene(scene);
+
+        // Make the new window modal to block input to other windows
+        newWindow.initModality(Modality.APPLICATION_MODAL);
+
+        // Show the new window
+        newWindow.show();
+        
+    }
+    public void revplaf(){
+    // Create a new Stage (window)
+        Stage newWindow = new Stage();
+        newWindow.setTitle("revetement pour pour plafond");
+        // Text explicatif
+        Label instruction = new Label("revetement pour pour le plafond");
+        // Create a ChoiceBox and add some choices
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll("Choice 1", "Choice 2", "Choice 3");
+
+        // Create a Button to close the new window
+        Button closeButton = new Button("Valide");
+        closeButton.setOnAction(event -> newWindow.close());
+
+        // Center the close button using an HBox
+        HBox hbox = new HBox(closeButton);
+        hbox.setAlignment(Pos.CENTER);
+
+        // Layout for the new window
+        VBox vbox = new VBox(instruction, choiceBox, hbox);
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
+
+        // Set the Scene for the new window
+        Scene scene = new Scene(vbox, 200, 150);
+        newWindow.setScene(scene);
+
+        // Make the new window modal to block input to other windows
+        newWindow.initModality(Modality.APPLICATION_MODAL);
+
+        // Show the new window
+        newWindow.show();
+        
+    }
     private void DemandePorteFen(){
         Stage inputStage = new Stage();
         inputStage.setTitle("Input Window");
