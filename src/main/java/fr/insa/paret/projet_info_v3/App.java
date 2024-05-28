@@ -331,6 +331,7 @@ public class App extends Application {
         Label errorLabel = new Label();
         Label Rev = new Label("Quelle revetement pour ce mur?");
         ChoiceBox<String> rev = new ChoiceBox<>();
+        rev.getItems().addAll("Peinture:10,95","Carrelage:49,75","Lambris:50,60","Marbre:97,85","Crepi:67,80","Papier peint:32,90","Plaquettes de Parement:15,20","Peinture:77,30","Peinture:29,90","Carrelage:89,45","Lambris:42,50","Liege:25,40","Carrelage:10,35");
         
         // ca ne marche pas :(
         //for (String revetement : getRevetementsPourMur()) {
