@@ -302,6 +302,24 @@ public class App extends Application {
         gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
         gc.strokeLine(0, 100, 0, 0); // Left
     }
+    /*
+    public static List<String> getRevetementsPourMur() {
+        List<String> revetementsPourMur = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] t = line.split(";");
+                if (t.length == 6 && t[2].equals("1")) {
+                    String nomRevetement = "\"" + t[1] + "\"";
+                    revetementsPourMur.add(nomRevetement);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return revetementsPourMur;
+    }
+*/
     private void DemandePorteFen(){
         Stage inputStage = new Stage();
         inputStage.setTitle("Input Window");
@@ -313,9 +331,10 @@ public class App extends Application {
         Label errorLabel = new Label();
         Label Rev = new Label("Quelle revetement pour ce mur?");
         ChoiceBox<String> rev = new ChoiceBox<>();
-        for (String revetement : getRevetementsPourMur()) {
-        rev.getItems().add(revetement);
-        }
+        
+        // ca ne marche pas :(
+        //for (String revetement : getRevetementsPourMur()) {
+        //rev.getItems().add(revetement);}
         
         errorLabel.setTextFill(Color.RED);
         Button fin = new Button("Valider");
