@@ -161,8 +161,14 @@ public class App extends Application {
          e.printStackTrace();
      }
 }
-     public void sauvgardemur(int a, int b, int rev){
-     
+     public void sauvgardemur(int a, int b, int fen, int porte, int rev){
+         int nbmur=1;
+     try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
+         bw.write("Coin;"+nbmur+";"+a+";"+b+";"+porte+";"+fen+";"+rev+"\n");
+         bw.close();
+     }catch (IOException e){
+         e.printStackTrace();
+     }
 }
     
      private void Recup() {
