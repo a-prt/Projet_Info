@@ -329,7 +329,9 @@ public static List<String> getRevetementsPourMur() {
         Label errorLabel = new Label();
         Label Rev = new Label("Quelle revetement pour ce mur?");
         ChoiceBox<String> rev = new ChoiceBox<>();
-        rev.getItems().addAll(getRevetementsPourMur());
+        for (String revetement : getRevetementsPourMur()) {
+        rev.getItems().add(revetement);
+        }
         
         errorLabel.setTextFill(Color.RED);
         Button fin = new Button("Valider");
