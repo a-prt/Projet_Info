@@ -335,7 +335,7 @@ public class App extends Application {
         Label instruction = new Label("revetement pour pour le sol");
         // Create a ChoiceBox and add some choices
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Choice 1", "Choice 2", "Choice 3");
+        choiceBox.getItems().addAll("Carrelage:49,75", "Lambris:50,60", "Marbre:97,85","Carrelage:89,45","Lambris:42,50","Parquet:46,36","Vinyle Lino:23,55","Moquette:48,10","Stratifie:31,99","Gazon:17,95","Liege:33,90","Carrelage:10,35");
 
         // Create a Button to close the new window
         Button closeButton = new Button("Valide");
@@ -369,7 +369,7 @@ public class App extends Application {
         Label instruction = new Label("revetement pour pour le plafond");
         // Create a ChoiceBox and add some choices
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Choice 1", "Choice 2", "Choice 3");
+        choiceBox.getItems().addAll("Peinture:10,95", "Lambris:50,60", "Peinture:77,30","Peinture:29,90");
 
         // Create a Button to close the new window
         Button closeButton = new Button("Valide");
