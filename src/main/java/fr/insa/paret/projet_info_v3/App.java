@@ -125,7 +125,7 @@ public class App extends Application {
     }
 
     private void MakeRoom(double x1, double y1, double x2, double y2) {
-        int idcoin=0;
+        //int idcoin=0;
         double x3 = x1;
         double y3 = y2;
         double x4 = x2;
@@ -302,7 +302,22 @@ public class App extends Application {
         gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
         gc.strokeLine(0, 100, 0, 0); // Left
     }
-
+public static List<String> getRevetementsPourMur() {
+        List<String> revetementsPourMur = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] t = line.split(";");
+                if (t.length == 6 && t[2].equals("1")) {
+                    String nomRevetement = "\"" + t[1] + "\"";
+                    revetementsPourMur.add(nomRevetement);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return revetementsPourMur;
+    }
     private void DemandePorteFen(){
         Stage inputStage = new Stage();
         inputStage.setTitle("Input Window");
@@ -314,7 +329,7 @@ public class App extends Application {
         Label errorLabel = new Label();
         Label Rev = new Label("Quelle revetement pour ce mur?");
         ChoiceBox<String> rev = new ChoiceBox<>();
-        rev.getItems().addAll(Revetement.getRevetementsPourMur());
+        rev.getItems().addAll(getRevetementsPourMur());
         
         errorLabel.setTextFill(Color.RED);
         Button fin = new Button("Valider");
