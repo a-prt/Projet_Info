@@ -302,22 +302,6 @@ public class App extends Application {
         gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
         gc.strokeLine(0, 100, 0, 0); // Left
     }
-public static List<String> getRevetementsPourMur() {
-        List<String> revetementsPourMur = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] t = line.split(";");
-                if (t.length == 6 && t[2].equals("1")) {
-                    String nomRevetement = "\"" + t[1] + "\"";
-                    revetementsPourMur.add(nomRevetement);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return revetementsPourMur;
-    }
     private void DemandePorteFen(){
         Stage inputStage = new Stage();
         inputStage.setTitle("Input Window");
