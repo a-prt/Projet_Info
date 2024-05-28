@@ -26,6 +26,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.text.Text;
 
+
 public class App extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
@@ -130,14 +131,7 @@ public class App extends Application {
         double y3 = y2;
         double x4 = x2;
         double y4 = y1;
-       /* Coin coin = new Coin(idcoin, x1, y1);
-        try {
-            BufferedWriter bw=new BufferedWriter(new FileWriter("batiment.txt"));
-        }
-        catch(Expection e){
-            e.printStackTrace();
-        }
-*/
+       
         gc.setFill(Color.RED);
         gc.fillOval(x1 - 2.5, y1 - 2.5, 5, 5);
         gc.fillOval(x2 - 2.5, y2 - 2.5, 5, 5);
@@ -152,8 +146,21 @@ public class App extends Application {
         
         
         // il faut crée les coin avec les coords (x1, y1) etc et les murs
-        
+        sauvgardecoin(x1,y1);
+        sauvgardecoin(x2,y2);
+        sauvgardecoin(x3,y3);
+        sauvgardecoin(x4,y4);
        
+    }
+    public void sauvgardecoin(double x, double y){
+        int nbcoin=1;
+    try (BufferedWriter bw=new BufferedWriter(new FileWriter("Batiment.txt"))){
+            bw.write("Coin;"+nbcoin+";"+x+";"+y);
+            bw.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
      private void Recup() {
         try (BufferedReader br = new BufferedReader(new FileReader("batiment.txt"))) {
