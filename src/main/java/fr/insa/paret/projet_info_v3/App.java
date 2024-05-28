@@ -47,13 +47,13 @@ public class App extends Application {
         
        
 
-        Button button1 = new Button("Suprimer");
+        Button button1 = new Button("Supprimer");
         button1.setOnAction(e -> clearCanvas());
 
         Button button2 = new Button("Creation de piece");
         button2.setOnAction(e -> CreaPiece());
         
-        Button button3 = new Button("Button 3");
+        Button button3 = new Button("Sauvegarder");
         button3.setOnAction(e -> Recup());
 
         VBox buttons = new VBox(10, button1, button2, button3);
@@ -99,7 +99,7 @@ public class App extends Application {
         TextField inputY2 = new TextField();
         GridPane.setConstraints(inputY2, 1, 3);
 
-        Button submitButton = new Button("Submit");
+        Button submitButton = new Button("Valider");
         GridPane.setConstraints(submitButton, 1, 4);
         submitButton.setOnAction(e -> {
             try {
@@ -266,7 +266,7 @@ public class App extends Application {
         checkboxes.setPadding(new Insets(20));
 
         // Submit button to close the window
-        Button submitButton = new Button("Submit");
+        Button submitButton = new Button("Valider");
         submitButton.setOnAction(e -> squareStage.close());
 
         VBox controls = new VBox(10, checkboxes, submitButton);
@@ -310,13 +310,13 @@ public class App extends Application {
         rev.getItems().addAll(Revetement.getRevetementsPourMur());
         
         errorLabel.setTextFill(Color.RED);
-        Button fin = new Button("Submit");
+        Button fin = new Button("Valider");
 
         fin.setOnAction(e -> {
             if (isValidInput(inputPorte.getText()) && isValidInput(inputFenetre.getText())) {
                 inputStage.close();
             } else {
-                errorLabel.setText("Please enter valid natural numbers for both fields.");
+                errorLabel.setText("Entrer des nombres entiers valides.");
             }
         });
 
