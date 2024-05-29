@@ -65,40 +65,24 @@ public class Revetement {
     public double getPrixUnitaire (){
         return prixUnitaire;
     }
-    public void LectureRevetement(int id) {
-            try{
-                BufferedReader bufferedReader= new BufferedReader(new FileReader("CatalogueRevetements.txt"));
-                String line;
-                while((line = bufferedReader.readLine()) != null){
-                        String [] t=line.split(";");
-                        if (t[0].equals(Integer.toString(id))){
-                            this.idRevetement=id;
-                            this.nomrev=t[1];
-                            if (t[2].equals("1")){
-                                this.pourMur= true;
-                            }else{
-                                this.pourMur= false; 
-                                        }
-                            if (t[3].equals("1")){
-                                this.pourSol= true;
-                            }else{
-                                this.pourSol= false; 
-                                        }
-                            if (t[4].equals("1")){
-                                   this.pourPlafond= true;
-                            }else{
-                                this.pourPlafond= false; 
-                            }
-                            this.prixUnitaire = Double.parseDouble(t[5]);
-                            break; // sort de la boucle lorsque le revetement est trouvé
-                        }
+ public static Revetement createRevetementFromCatalogue(int id) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] t = line.split(";");
+                if (Integer.parseInt(t[0]) == id) {
+                    boolean pourMur = t[2].equals("1");
+                    boolean pourSol = t[3].equals("1");
+                    boolean pourPlafond = t[4].equals("1");
+                    double prixUnitaire = Double.parseDouble(t[5]);
+                    return new Revetement(id, t[1], pourMur, pourSol, pourPlafond, prixUnitaire);
                 }
-    }catch (Exception e){
-                e.printStackTrace();
-    }
+            }
+        }
+        return null;
     }
 
-    public static List<String> getRevetementsPourMur() {
+   /* public static List<String> getRevetementsPourMur() {
         List<String> revetementsPourMur = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
             String line;
@@ -147,7 +131,7 @@ public class Revetement {
             e.printStackTrace();
         }
         return revetementsPourPlafond;
-    }
+    }*/
         
 }
     

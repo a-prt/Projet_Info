@@ -15,7 +15,7 @@ public class Appartement {
     int idNiveauAppartement;
     List<Piece> listePieces;
     
-    public Appartement(int idAppartement, List<Piece> listePieces, int idNiveauAppartement, double surface) {
+    public Appartement(int idAppartement, List<Piece> listePieces, int idNiveauAppartement) {
         this.idAppartement= idAppartement;
         this.listePieces=listePieces;
         this.idNiveauAppartement=idNiveauAppartement;
