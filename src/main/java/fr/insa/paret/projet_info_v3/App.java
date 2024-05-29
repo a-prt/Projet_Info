@@ -23,21 +23,30 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import static javafx.application.Application.launch;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.text.Text;
 
 
 public class App extends Application {
-    
     private Canvas canvas;
     private GraphicsContext gc;
-    private boolean topSelected = false;
-    private boolean rightSelected = false;
-    private boolean bottomSelected = false;
-    private boolean leftSelected = false;
-    int nbcoin=0;
-    
+    private int currentLevel = 0;
+    private int currentApartment = 0;
+    private int coinId = 0;
+    private int murId = 0;
+    private int pieceId = 0;
+    private int solId = 0;
+    private int plafondId = 0;
+    private int appartementId = 0;
+    private int niveauId = 0;
+    private int batimentId = 1;
+
+    private List<Integer> niveaux = new ArrayList<>();
+    private List<Integer> appartements = new ArrayList<>();
+    private List<Integer> pieces = new ArrayList<>();
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -45,22 +54,17 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Devis batiment");
-        
+
         canvas = new Canvas(400, 400);
         gc = canvas.getGraphicsContext2D();
-        
-       
-// creation de buttons sur la fenetre principal
+
         Button button1 = new Button("Supprimer");
         button1.setOnAction(e -> clearCanvas());
 
-        Button button2 = new Button("Creation de piece");
-        button2.setOnAction(e -> CreaPiece());
-        
-        Button button3 = new Button("Sauvegarder");
-        button3.setOnAction(e -> Recup());
+        Button button2 = new Button("Configurer le bâtiment");
+        button2.setOnAction(e -> promptBuildingDetails());
 
-        VBox buttons = new VBox(10, button1, button2, button3);
+        VBox buttons = new VBox(10, button1, button2);
         buttons.setAlignment(Pos.CENTER);
         HBox root = new HBox(10, canvas, buttons);
         root.setPadding(new Insets(10));
@@ -69,19 +73,138 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-// efface le canvas et la sauvgarde
+
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt"))){
-         bw.write("");
-         bw.close();
-     }catch (IOException e){
-         e.printStackTrace();
-     }    }
-// demande les coordonnes des coins de la pièce
-    private void CreaPiece() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt"))) {
+            bw.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void promptBuildingDetails() {
         Stage inputStage = new Stage();
-        inputStage.setTitle("Entrer les Coordonnes");
+        inputStage.setTitle("Configurer le bâtiment");
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+        grid.setVgap(10);
+        grid.setHgap(10);
+
+        Label labelNbNiveaux = new Label("Nombre de niveaux:");
+        GridPane.setConstraints(labelNbNiveaux, 0, 0);
+        TextField inputNbNiveaux = new TextField();
+        GridPane.setConstraints(inputNbNiveaux, 1, 0);
+
+        Button submitButton = new Button("Valider");
+        GridPane.setConstraints(submitButton, 1, 1);
+        submitButton.setOnAction(e -> {
+            try {
+                int nbNiveaux = Integer.parseInt(inputNbNiveaux.getText());
+                inputStage.close();
+                niveauId++;
+                promptLevelDetails(nbNiveaux);
+                saveBatimentDetails();
+            } catch (NumberFormatException ex) {
+                // Handle incorrect input
+            }
+        });
+
+        grid.getChildren().addAll(labelNbNiveaux, inputNbNiveaux, submitButton);
+
+        Scene scene = new Scene(grid, 300, 150);
+        inputStage.setScene(scene);
+        inputStage.initModality(Modality.APPLICATION_MODAL);
+        inputStage.showAndWait();
+    }
+
+    private void promptLevelDetails(int nbNiveaux) {
+        for (int i = 0; i < nbNiveaux; i++) {
+            currentLevel = i + 1;
+            Stage inputStage = new Stage();
+            inputStage.setTitle("Détails du niveau " + currentLevel);
+
+            GridPane grid = new GridPane();
+            grid.setPadding(new Insets(10));
+            grid.setVgap(10);
+            grid.setHgap(10);
+
+            Label labelNbAppartements = new Label("Nombre d'appartements pour le niveau " + currentLevel + ":");
+            GridPane.setConstraints(labelNbAppartements, 0, 0);
+            TextField inputNbAppartements = new TextField();
+            GridPane.setConstraints(inputNbAppartements, 1, 0);
+
+            Button submitButton = new Button("Valider");
+            GridPane.setConstraints(submitButton, 1, 1);
+            submitButton.setOnAction(e -> {
+                try {
+                    int nbAppartements = Integer.parseInt(inputNbAppartements.getText());
+                    inputStage.close();
+                    promptApartmentDetails(currentLevel, nbAppartements);
+                    saveNiveauDetails(currentLevel);
+                } catch (NumberFormatException ex) {
+                    // Handle incorrect input
+                }
+            });
+
+            grid.getChildren().addAll(labelNbAppartements, inputNbAppartements, submitButton);
+
+            Scene scene = new Scene(grid, 300, 150);
+            inputStage.setScene(scene);
+            inputStage.initModality(Modality.APPLICATION_MODAL);
+            inputStage.showAndWait();
+        }
+    }
+
+    private void promptApartmentDetails(int levelIndex, int nbAppartements) {
+        for (int i = 0; i < nbAppartements; i++) {
+            currentApartment = i + 1;
+            appartementId++;
+            Stage inputStage = new Stage();
+            inputStage.setTitle("Détails de l'appartement " + currentApartment + " du niveau " + levelIndex);
+
+            GridPane grid = new GridPane();
+            grid.setPadding(new Insets(10));
+            grid.setVgap(10);
+            grid.setHgap(10);
+
+            Label labelNbPieces = new Label("Nombre de pièces pour l'appartement " + currentApartment + ":");
+            GridPane.setConstraints(labelNbPieces, 0, 0);
+            TextField inputNbPieces = new TextField();
+            GridPane.setConstraints(inputNbPieces, 1, 0);
+
+            Button submitButton = new Button("Valider");
+            GridPane.setConstraints(submitButton, 1, 1);
+            submitButton.setOnAction(e -> {
+                try {
+                    int nbPieces = Integer.parseInt(inputNbPieces.getText());
+                    inputStage.close();
+                    createPieces(levelIndex, currentApartment, nbPieces);
+                    saveAppartementDetails(levelIndex, currentApartment);
+                } catch (NumberFormatException ex) {
+                    // Handle incorrect input
+                }
+            });
+
+            grid.getChildren().addAll(labelNbPieces, inputNbPieces, submitButton);
+
+            Scene scene = new Scene(grid, 300, 150);
+            inputStage.setScene(scene);
+            inputStage.initModality(Modality.APPLICATION_MODAL);
+            inputStage.showAndWait();
+        }
+    }
+
+    private void createPieces(int levelIndex, int apartmentIndex, int nbPieces) {
+        for (int i = 0; i < nbPieces; i++) {
+            promptPieceDetails(levelIndex, apartmentIndex, i);
+        }
+    }
+
+    private void promptPieceDetails(int levelIndex, int apartmentIndex, int pieceIndex) {
+        Stage inputStage = new Stage();
+        inputStage.setTitle("Détails de la pièce " + (pieceIndex + 1));
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
@@ -108,38 +231,164 @@ public class App extends Application {
         TextField inputY2 = new TextField();
         GridPane.setConstraints(inputY2, 1, 3);
 
+        Label labelNbPortes = new Label("Nombre de portes:");
+        GridPane.setConstraints(labelNbPortes, 0, 4);
+        TextField inputNbPortes = new TextField();
+        GridPane.setConstraints(inputNbPortes, 1, 4);
+
+        Label labelNbFenetres = new Label("Nombre de fenêtres:");
+        GridPane.setConstraints(labelNbFenetres, 0, 5);
+        TextField inputNbFenetres = new TextField();
+        GridPane.setConstraints(inputNbFenetres, 1, 5);
+
+        Label labelRevMurTop = new Label("ID revêtement du mur du haut:");
+        GridPane.setConstraints(labelRevMurTop, 0, 6);
+        TextField inputRevMurTop = new TextField();
+        GridPane.setConstraints(inputRevMurTop, 1, 6);
+
+        Label labelRevMurRight = new Label("ID revêtement du mur de droite:");
+        GridPane.setConstraints(labelRevMurRight, 0, 7);
+        TextField inputRevMurRight = new TextField();
+        GridPane.setConstraints(inputRevMurRight, 1, 7);
+
+        Label labelRevMurBottom = new Label("ID revêtement du mur du bas:");
+        GridPane.setConstraints(labelRevMurBottom, 0, 8);
+        TextField inputRevMurBottom = new TextField();
+        GridPane.setConstraints(inputRevMurBottom, 1, 8);
+
+        Label labelRevMurLeft = new Label("ID revêtement du mur de gauche:");
+        GridPane.setConstraints(labelRevMurLeft, 0, 9);
+        TextField inputRevMurLeft = new TextField();
+        GridPane.setConstraints(inputRevMurLeft, 1, 9);
+
+        Label labelRevSol = new Label("ID revêtement du sol:");
+        GridPane.setConstraints(labelRevSol, 0, 10);
+        TextField inputRevSol = new TextField();
+        GridPane.setConstraints(inputRevSol, 1, 10);
+
+        Label labelRevPlafond = new Label("ID revêtement du plafond:");
+        GridPane.setConstraints(labelRevPlafond, 0, 11);
+        TextField inputRevPlafond = new TextField();
+        GridPane.setConstraints(inputRevPlafond, 1, 11);
+
         Button submitButton = new Button("Valider");
-        GridPane.setConstraints(submitButton, 1, 4);
+        GridPane.setConstraints(submitButton, 1, 12);
         submitButton.setOnAction(e -> {
-            Choixmurs();
             try {
                 double x1 = Double.parseDouble(inputX1.getText());
                 double y1 = Double.parseDouble(inputY1.getText());
                 double x2 = Double.parseDouble(inputX2.getText());
                 double y2 = Double.parseDouble(inputY2.getText());
-                //choix revetement
-                MakeRoom(x1, y1, x2, y2);
+                int nbPortes = Integer.parseInt(inputNbPortes.getText());
+                int nbFenetres = Integer.parseInt(inputNbFenetres.getText());
+                int revMurTop = Integer.parseInt(inputRevMurTop.getText());
+                int revMurRight = Integer.parseInt(inputRevMurRight.getText());
+                int revMurBottom = Integer.parseInt(inputRevMurBottom.getText());
+                int revMurLeft = Integer.parseInt(inputRevMurLeft.getText());
+                int revSol = Integer.parseInt(inputRevSol.getText());
+                int revPlafond = Integer.parseInt(inputRevPlafond.getText());
+
+                savePieceDetails(levelIndex, apartmentIndex, pieceIndex, x1, y1, x2, y2, nbPortes, nbFenetres, revMurTop, revMurRight, revMurBottom, revMurLeft, revSol, revPlafond);
                 inputStage.close();
             } catch (NumberFormatException ex) {
-                // Gere les mauvaises saisies 
-            }     
+                // Handle incorrect input
+            }
         });
 
-        grid.getChildren().addAll(labelX1, inputX1, labelY1, inputY1, labelX2, inputX2, labelY2, inputY2, submitButton);
+        grid.getChildren().addAll(labelX1, inputX1, labelY1, inputY1, labelX2, inputX2, labelY2, inputY2, labelNbPortes, inputNbPortes, labelNbFenetres, inputNbFenetres, labelRevMurTop, inputRevMurTop, labelRevMurRight, inputRevMurRight, labelRevMurBottom, inputRevMurBottom, labelRevMurLeft, inputRevMurLeft, labelRevSol, inputRevSol, labelRevPlafond, inputRevPlafond, submitButton);
 
-        Scene scene = new Scene(grid, 300, 200);
+        Scene scene = new Scene(grid, 500, 400);
         inputStage.setScene(scene);
         inputStage.initModality(Modality.APPLICATION_MODAL);
         inputStage.showAndWait();
     }
-//dessin la pièce sur le canvas
-    private void MakeRoom(double x1, double y1, double x2, double y2) {
-        //int idcoin=0;
+
+    private void savePieceDetails(int levelIndex, int apartmentIndex, int pieceIndex, double x1, double y1, double x2, double y2, int nbPortes, int nbFenetres, int revMurTop, int revMurRight, int revMurBottom, int revMurLeft, int revSol, int revPlafond) {
+        int currentPieceId = ++pieceId;
+        int currentSolId = ++solId;
+        int currentPlafondId = ++plafondId;
+        
+        int idCoin1 = ++coinId;
+        int idCoin2 = ++coinId;
+        int idCoin3 = ++coinId;
+        int idCoin4 = ++coinId;
+
+        int idMurTop = ++murId;
+        int idMurRight = ++murId;
+        int idMurBottom = ++murId;
+        int idMurLeft = ++murId;
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+            bw.write("Coins;" + idCoin1 + ";" + x1 + ";" + y1 + "\n");
+            bw.write("Coins;" + idCoin2 + ";" + x2 + ";" + y2 + "\n");
+            bw.write("Coins;" + idCoin3 + ";" + x1 + ";" + y2 + "\n");
+            bw.write("Coins;" + idCoin4 + ";" + x2 + ";" + y1 + "\n");
+            
+            bw.write("Mur;" + idMurTop + ";" + idCoin1 + ";" + idCoin4 + ";" + nbPortes + ";" + nbFenetres + ";" + revMurTop + "\n");
+            bw.write("Mur;" + idMurRight + ";" + idCoin4 + ";" + idCoin2 + ";" + nbPortes + ";" + nbFenetres + ";" + revMurRight + "\n");
+            bw.write("Mur;" + idMurBottom + ";" + idCoin2 + ";" + idCoin3 + ";" + nbPortes + ";" + nbFenetres + ";" + revMurBottom + "\n");
+            bw.write("Mur;" + idMurLeft + ";" + idCoin3 + ";" + idCoin1 + ";" + nbPortes + ";" + nbFenetres + ";" + revMurLeft + "\n");
+
+            bw.write("Sol;" + currentSolId + ";" + idCoin1 + ";" + idCoin2 + ";" + idCoin3 + ";" + idCoin4 + ";" + revSol + "\n");
+            bw.write("Plafond;" + currentPlafondId + ";" + idCoin1 + ";" + idCoin2 + ";" + idCoin3 + ";" + idCoin4 + ";" + revPlafond + "\n");
+
+            bw.write("Piece;" + currentPieceId + ";" + currentSolId + ";" + currentPlafondId + ";" + idMurTop + ";" + idMurRight + ";" + idMurBottom + ";" + idMurLeft + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        pieces.add(currentPieceId);
+
+        drawPiece(x1, y1, x2, y2);
+    }
+
+    private void saveAppartementDetails(int levelIndex, int apartmentIndex) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+            bw.write("Appartement;" + apartmentIndex + ";" + levelIndex + ";");
+            for (Integer piece : pieces) {
+                bw.write(piece + ";");
+            }
+            bw.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        appartements.add(appartementId);
+        pieces.clear();
+    }
+
+    private void saveNiveauDetails(int niveauIndex) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+            bw.write("Niveau;" + niveauIndex + ";");
+            for (Integer appartement : appartements) {
+                bw.write(appartement + ";");
+            }
+            bw.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        niveaux.add(niveauIndex);
+        appartements.clear();
+    }
+
+    private void saveBatimentDetails() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+            bw.write("Batiment;" + batimentId + ";");
+            for (Integer niveau : niveaux) {
+                bw.write(niveau + ";");
+            }
+            bw.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        niveaux.clear();
+    }
+
+    private void drawPiece(double x1, double y1, double x2, double y2) {
         double x3 = x1;
         double y3 = y2;
         double x4 = x2;
         double y4 = y1;
-       
+
         gc.setFill(Color.RED);
         gc.fillOval(x1 - 2.5, y1 - 2.5, 5, 5);
         gc.fillOval(x2 - 2.5, y2 - 2.5, 5, 5);
@@ -150,358 +399,7 @@ public class App extends Application {
         gc.strokeLine(x4, y4, x2, y2);
         gc.strokeLine(x2, y2, x3, y3);
         gc.strokeLine(x3, y3, x1, y1);
-        
-        
-        
-        // il faut crée les coin avec les coords (x1, y1) etc et les murs
-        sauvgardecoin(x1,y1,nbcoin);
-        nbcoin++;
-        sauvgardecoin(x2,y2, nbcoin);
-        nbcoin++;
-        sauvgardecoin(x3,y3, nbcoin);
-        nbcoin++;
-        sauvgardecoin(x4,y4, nbcoin);
-        nbcoin++;
-       
     }
-    // on choisit quel murs font parti de la pièce et quel revetement
-      private void Choixmurs() {
-        Stage squareStage = new Stage();
-        squareStage.setTitle("Square Window");
-
-        // Creer un Canvas et un GraphicsContext pour dessiner
-        Canvas canvas = new Canvas(100, 100);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        // dessin un carré de base
-        drawSquare(gc);
-        
-        //Nommes les côtés du carré
-        Text Side1 = new Text("1");
-        Text Side2 = new Text("4");
-        Text Side3 = new Text("2");
-        Text Side4 = new Text("3");
-        
-        //associe le bon nom a chaque côté du carré
-        VBox vertsquare = new VBox (10,Side1, canvas, Side4);
-        vertsquare.setAlignment(Pos.CENTER);
-        HBox totsquare = new HBox (10, Side2, vertsquare, Side3);
-        totsquare.setAlignment(Pos.CENTER);
-
-        // Texte and CheckBoxes
-        Text instructionText = new Text("Saisisser les informations sur les murs:");
-        CheckBox side1 = new CheckBox("1");
-        CheckBox side2 = new CheckBox("2");
-        CheckBox side3 = new CheckBox("3");
-        CheckBox side4 = new CheckBox("4");
-        CheckBox sol = new CheckBox("Sol");
-        CheckBox plafond = new CheckBox("Plafond");
-        side1.setOnAction(e -> {
-            topSelected = side1.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side2.setOnAction(e -> {
-            rightSelected = side2.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side3.setOnAction(e -> {
-            bottomSelected = side3.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side4.setOnAction(e -> {
-            leftSelected = side4.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        sol.setOnAction(e -> {
-            revsol();
-        });
-        plafond.setOnAction(e -> {
-            revplaf();
-        });
-        
-        VBox checkboxes = new VBox(10, instructionText, side1, side2, side3, side4, sol, plafond);
-        checkboxes.setAlignment(Pos.CENTER_LEFT);
-        checkboxes.setPadding(new Insets(20));
-
-        // Bouton pour fermer la fenetre
-        Button submitButton = new Button("Valider");
-        submitButton.setOnAction(e -> squareStage.close());
-
-        VBox controls = new VBox(10, checkboxes, submitButton);
-        controls.setAlignment(Pos.CENTER);
-
-        HBox layout = new HBox(20, totsquare, controls);
-        layout.setPadding(new Insets(20));
-
-        Scene scene = new Scene(layout, 400, 300);
-        squareStage.setScene(scene);
-        squareStage.initModality(Modality.APPLICATION_MODAL);
-        squareStage.show();
-    }
-    // fonction qui actualise le carre dans ChoixMur
-    private void drawSquare(GraphicsContext gc) {
-        gc.clearRect(0, 0, 100, 100);
-        gc.setStroke(topSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(0, 0, 100, 0); // Top
-
-        gc.setStroke(rightSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(100, 0, 100, 100); // Right
-
-        gc.setStroke(bottomSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(100, 100, 0, 100); // Bottom
-
-        gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(0, 100, 0, 0); // Left
-    }
-    // fonction qui demande le nombre de porte, fenetre et le revetement
-    private void DemandePorteFen(){
-        Stage inputStage = new Stage();
-        inputStage.setTitle("Input Window");
-
-        Label nbport = new Label("Nombre de porte sur ce mur?");
-        TextField inputPorte = new TextField();
-        Label nbfen = new Label("Nombre de fenetre sur ce mur?");
-        TextField inputFenetre = new TextField();
-        Label errorLabel = new Label();
-        Label Rev = new Label("Quelle revetement pour ce mur?");
-        ChoiceBox<String> rev = new ChoiceBox<>();
-        rev.getItems().addAll("Peinture:10,95","Carrelage:49,75","Lambris:50,60","Marbre:97,85","Crepi:67,80","Papier peint:32,90","Plaquettes de Parement:15,20","Peinture:77,30","Peinture:29,90","Carrelage:89,45","Lambris:42,50","Liege:25,40","Carrelage:10,35");
-        
-        // ca ne marche pas :(
-        //for (String revetement : getRevetementsPourMur()) {
-        //rev.getItems().add(revetement);}
-        
-        errorLabel.setTextFill(Color.RED);
-        Button fin = new Button("Valider");
-
-        fin.setOnAction(e -> {
-            if (isValidInput(inputPorte.getText()) && isValidInput(inputFenetre.getText())) {
-                inputStage.close();
-            } else {
-                errorLabel.setText("Entrer des nombres entiers valides.");
-            }
-        });
-
-        VBox choix = new VBox(10, nbport, inputPorte, nbfen, inputFenetre, errorLabel, Rev, rev, fin);
-        choix.setAlignment(Pos.CENTER);
-        choix.setPadding(new Insets(20));
-
-        Scene scene = new Scene(choix, 400, 300);
-        inputStage.setScene(scene);
-        inputStage.initModality(Modality.APPLICATION_MODAL);
-        inputStage.show();
-    }
-    // demande le revetement du sol
-    public void revsol(){
-    // Create a new Stage (window)
-        Stage newWindow = new Stage();
-        newWindow.setTitle("revetement pour pour sol");
-           // instruction
-        Label instruction = new Label("revetement pour pour le sol");
-        // Create a ChoiceBox and add some choices
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Carrelage : 49,75", "Lambris : 50,60", "Marbre : 97,85","Carrelage : 89,45","Lambris : 42,50","Parquet : 46,36","Vinyle Lino : 23,55","Moquette : 48,10","Stratifie : 31,99","Gazon : 17,95","Liege : 33,90","Carrelage : 10,35");
-
-        // Create a Button to close the new window
-        Button closeButton = new Button("Valide");
-        closeButton.setOnAction(event -> newWindow.close());
-
-        // Center the close button using an HBox
-        HBox hbox = new HBox(closeButton);
-        hbox.setAlignment(Pos.CENTER);
-
-        // Layout for the new window
-        VBox vbox = new VBox(instruction, choiceBox, hbox);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
-
-        // Set the Scene for the new window
-        Scene scene = new Scene(vbox, 200, 150);
-        newWindow.setScene(scene);
-
-        // Make the new window modal to block input to other windows
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-
-        // Show the new window
-        newWindow.show();   
-    }
-    //demande le revetement du plafond
-    
-    // ca ne marche pas:(
-    public CompletableFuture<Double> revplaf() {
-        CompletableFuture<Double> futureChoice = new CompletableFuture<>();
-
-        // Create a new Stage (window)
-        Stage newWindow = new Stage();
-        newWindow.setTitle("Revetement pour plafond");
-
-        // Text explicatif
-        Label instruction = new Label("Revetement pour le plafond");
-
-        // Create a ChoiceBox and add some choices
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Peinture :10.95", "Lambris :50.60", "Peinture :77.30", "Peinture :29.90");
-
-        // Create a Button to close the new window
-        Button closeButton = new Button("Valide");
-        closeButton.setOnAction(event -> {
-            String selectedChoice = choiceBox.getValue();
-            double revprix = 0;
-            if (selectedChoice != null) {
-                revprix = extractPrice(selectedChoice);
-            }
-            futureChoice.complete(revprix);
-            newWindow.close();
-        });
-
-        // Center the close button using an HBox
-        HBox hbox = new HBox(closeButton);
-        hbox.setAlignment(Pos.CENTER);
-
-        // Layout for the new window
-        VBox vbox = new VBox(10, instruction, choiceBox, hbox);
-        vbox.setAlignment(Pos.CENTER);
-
-        // Set the Scene for the new window
-        Scene scene = new Scene(vbox, 300, 200);
-        newWindow.setScene(scene);
-
-        // Make the new window modal to block input to other windows
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-
-        // Show the new window
-        newWindow.show();
-try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
-         bw.write(futureChoice+"\n");
-         bw.close();
-     }catch (IOException e){
-         e.printStackTrace();
-     }
-        return futureChoice;
-    }
-
-    private double extractPrice(String choice) {
-        String[] parts = choice.split(":");
-        if (parts.length == 2) {
-            try {
-                return Double.parseDouble(parts[1].trim().replace(',', '.'));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
-        return 0.0;
-    }
-
-   
-
-    //Sauvgarde les coins dans le fichier text
-    public void sauvgardecoin(double x, double y, int nbcoin){
-     try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
-         bw.write("Coin;"+nbcoin+";"+x+";"+y+"\n");
-         bw.close();
-     }catch (IOException e){
-         e.printStackTrace();
-     }
-}
-     public void sauvgardemur(int a, int b, int fen, int porte, int rev){
-         int nbmur=1;
-     try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
-         bw.write("Coin;"+nbmur+";"+a+";"+b+";"+porte+";"+fen+";"+rev+"\n");
-         bw.close();
-     }catch (IOException e){
-         e.printStackTrace();
-     }
-}
-    
-     private void Recup() {
-        try (BufferedReader br = new BufferedReader(new FileReader("batiment.txt"))) {
-            String line;
-            List<Double[]> coords = new ArrayList<>();
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 4 && parts[0].equals("Coin")) {
-                    try {
-                        double cx = Double.parseDouble(parts[2]);
-                        double cy = Double.parseDouble(parts[3]);
-                        coords.add(new Double[]{cx, cy});
-                    } catch (NumberFormatException e) {
-                        // Handle parse error
-                        System.out.println("Erreur de format dans le fichier : " + line);
-                    }
-                }
-            }
-            for (int i = 0; i < coords.size() - 1; i += 2) {
-                Double[] coin1 = coords.get(i);
-                Double[] coin2 = coords.get(i + 1);
-                MakeRoom(coin1[0], coin1[1], coin2[0], coin2[1]);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-    
-       /* public static void Fichierbatiment (Batiment batiment) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("batiment.txt"))) {
-            writer.write(batiment.toString());
-            writer.newLine();
-
-            for (Niveau niveau : batiment.getListeNiveaux()) {
-                writer.write(niveau.toString());
-                writer.newLine();
-
-                for (Appartement appartement : niveau.getListeApparts()) {
-                    writer.write(appartement.toString());
-                    writer.newLine();
-
-                    for (Piece piece : appartement.getListePieces()) {
-                        writer.write(piece.toString());
-                        writer.newLine();
-
-                        for (Mur mur : piece.getListeMurs()) {
-                            writer.write(mur.toString());
-                            writer.newLine();
-                        }
-
-                        writer.write(piece.getSol().toString());
-                        writer.newLine();
-                        writer.write(piece.getPlafond().toString());
-                        writer.newLine();
-                    }
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-     */
-        
-
-    
-    /*
-    public static List<String> getRevetementsPourMur() {
-        List<String> revetementsPourMur = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] t = line.split(";");
-                if (t.length == 6 && t[2].equals("1")) {
-                    String nomRevetement = "\"" + t[1] + "\"";
-                    revetementsPourMur.add(nomRevetement);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return revetementsPourMur;
-    }
-*/
-    
 
     private boolean isValidInput(String input) {
         if (input == null || input.isEmpty()) {
