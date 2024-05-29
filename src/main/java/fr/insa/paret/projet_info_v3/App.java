@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.text.Text;
@@ -110,6 +111,7 @@ public class App extends Application {
         Button submitButton = new Button("Valider");
         GridPane.setConstraints(submitButton, 1, 4);
         submitButton.setOnAction(e -> {
+            Choixmurs();
             try {
                 double x1 = Double.parseDouble(inputX1.getText());
                 double y1 = Double.parseDouble(inputY1.getText());
@@ -120,8 +122,7 @@ public class App extends Application {
                 inputStage.close();
             } catch (NumberFormatException ex) {
                 // Gere les mauvaises saisies 
-            }
-            Choixmurs();
+            }     
         });
 
         grid.getChildren().addAll(labelX1, inputX1, labelY1, inputY1, labelX2, inputX2, labelY2, inputY2, submitButton);
@@ -164,7 +165,7 @@ public class App extends Application {
        
     }
     // on choisit quel murs font parti de la pièce et quel revetement
-    private void Choixmurs() {
+      private void Choixmurs() {
         Stage squareStage = new Stage();
         squareStage.setTitle("Square Window");
 
@@ -329,31 +330,44 @@ public class App extends Application {
         newWindow.show();   
     }
     //demande le revetement du plafond
-    public void revplaf(){
-    // Create a new Stage (window)
+    
+    // ca ne marche pas:(
+    public CompletableFuture<Double> revplaf() {
+        CompletableFuture<Double> futureChoice = new CompletableFuture<>();
+
+        // Create a new Stage (window)
         Stage newWindow = new Stage();
-        newWindow.setTitle("revetement pour pour plafond");
+        newWindow.setTitle("Revetement pour plafond");
+
         // Text explicatif
-        Label instruction = new Label("revetement pour pour le plafond");
+        Label instruction = new Label("Revetement pour le plafond");
+
         // Create a ChoiceBox and add some choices
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Peinture : 10,95", "Lambris : 50,60", "Peinture : 77,30","Peinture : 29,90");
+        choiceBox.getItems().addAll("Peinture :10.95", "Lambris :50.60", "Peinture :77.30", "Peinture :29.90");
 
         // Create a Button to close the new window
         Button closeButton = new Button("Valide");
-        closeButton.setOnAction(event -> newWindow.close());
+        closeButton.setOnAction(event -> {
+            String selectedChoice = choiceBox.getValue();
+            double revprix = 0;
+            if (selectedChoice != null) {
+                revprix = extractPrice(selectedChoice);
+            }
+            futureChoice.complete(revprix);
+            newWindow.close();
+        });
 
         // Center the close button using an HBox
         HBox hbox = new HBox(closeButton);
         hbox.setAlignment(Pos.CENTER);
 
         // Layout for the new window
-        VBox vbox = new VBox(instruction, choiceBox, hbox);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
+        VBox vbox = new VBox(10, instruction, choiceBox, hbox);
+        vbox.setAlignment(Pos.CENTER);
 
         // Set the Scene for the new window
-        Scene scene = new Scene(vbox, 200, 150);
+        Scene scene = new Scene(vbox, 300, 200);
         newWindow.setScene(scene);
 
         // Make the new window modal to block input to other windows
@@ -361,8 +375,29 @@ public class App extends Application {
 
         // Show the new window
         newWindow.show();
-        
+try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
+         bw.write(futureChoice+"\n");
+         bw.close();
+     }catch (IOException e){
+         e.printStackTrace();
+     }
+        return futureChoice;
     }
+
+    private double extractPrice(String choice) {
+        String[] parts = choice.split(":");
+        if (parts.length == 2) {
+            try {
+                return Double.parseDouble(parts[1].trim().replace(',', '.'));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0.0;
+    }
+
+   
+
     //Sauvgarde les coins dans le fichier text
     public void sauvgardecoin(double x, double y, int nbcoin){
      try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
