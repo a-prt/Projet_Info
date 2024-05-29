@@ -28,12 +28,14 @@ import javafx.scene.text.Text;
 
 
 public class App extends Application {
+    
     private Canvas canvas;
     private GraphicsContext gc;
     private boolean topSelected = false;
     private boolean rightSelected = false;
     private boolean bottomSelected = false;
     private boolean leftSelected = false;
+    int nbcoin=0;
     
     public static void main(String[] args) {
         launch(args);
@@ -41,13 +43,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Rectangle Drawing App");
+        primaryStage.setTitle("Devis batiment");
         
         canvas = new Canvas(400, 400);
         gc = canvas.getGraphicsContext2D();
         
        
-
+// creation de buttons sur la fenetre principal
         Button button1 = new Button("Supprimer");
         button1.setOnAction(e -> clearCanvas());
 
@@ -66,11 +68,16 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+// efface le canvas et la sauvgarde
     private void clearCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    }
-
+    try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt"))){
+         bw.write("");
+         bw.close();
+     }catch (IOException e){
+         e.printStackTrace();
+     }    }
+// demande les coordonnes des coins de la pièce
     private void CreaPiece() {
         Stage inputStage = new Stage();
         inputStage.setTitle("Entrer les Coordonnes");
@@ -124,7 +131,7 @@ public class App extends Application {
         inputStage.initModality(Modality.APPLICATION_MODAL);
         inputStage.showAndWait();
     }
-
+//dessin la pièce sur le canvas
     private void MakeRoom(double x1, double y1, double x2, double y2) {
         //int idcoin=0;
         double x3 = x1;
@@ -146,14 +153,218 @@ public class App extends Application {
         
         
         // il faut crée les coin avec les coords (x1, y1) etc et les murs
-        sauvgardecoin(x1,y1);
-        sauvgardecoin(x2,y2);
-        sauvgardecoin(x3,y3);
-        sauvgardecoin(x4,y4);
+        sauvgardecoin(x1,y1,nbcoin);
+        nbcoin++;
+        sauvgardecoin(x2,y2, nbcoin);
+        nbcoin++;
+        sauvgardecoin(x3,y3, nbcoin);
+        nbcoin++;
+        sauvgardecoin(x4,y4, nbcoin);
+        nbcoin++;
        
     }
-    public void sauvgardecoin(double x, double y){
-        int nbcoin=1;
+    // on choisit quel murs font parti de la pièce et quel revetement
+    private void Choixmurs() {
+        Stage squareStage = new Stage();
+        squareStage.setTitle("Square Window");
+
+        // Creer un Canvas et un GraphicsContext pour dessiner
+        Canvas canvas = new Canvas(100, 100);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // dessin un carré de base
+        drawSquare(gc);
+        
+        //Nommes les côtés du carré
+        Text Side1 = new Text("1");
+        Text Side2 = new Text("4");
+        Text Side3 = new Text("2");
+        Text Side4 = new Text("3");
+        
+        //associe le bon nom a chaque côté du carré
+        VBox vertsquare = new VBox (10,Side1, canvas, Side4);
+        vertsquare.setAlignment(Pos.CENTER);
+        HBox totsquare = new HBox (10, Side2, vertsquare, Side3);
+        totsquare.setAlignment(Pos.CENTER);
+
+        // Texte and CheckBoxes
+        Text instructionText = new Text("Saisisser les informations sur les murs:");
+        CheckBox side1 = new CheckBox("1");
+        CheckBox side2 = new CheckBox("2");
+        CheckBox side3 = new CheckBox("3");
+        CheckBox side4 = new CheckBox("4");
+        CheckBox sol = new CheckBox("Sol");
+        CheckBox plafond = new CheckBox("Plafond");
+        side1.setOnAction(e -> {
+            topSelected = side1.isSelected();
+            drawSquare(gc);
+            DemandePorteFen();
+        });
+        side2.setOnAction(e -> {
+            rightSelected = side2.isSelected();
+            drawSquare(gc);
+            DemandePorteFen();
+        });
+        side3.setOnAction(e -> {
+            bottomSelected = side3.isSelected();
+            drawSquare(gc);
+            DemandePorteFen();
+        });
+        side4.setOnAction(e -> {
+            leftSelected = side4.isSelected();
+            drawSquare(gc);
+            DemandePorteFen();
+        });
+        sol.setOnAction(e -> {
+            revsol();
+        });
+        plafond.setOnAction(e -> {
+            revplaf();
+        });
+        
+        VBox checkboxes = new VBox(10, instructionText, side1, side2, side3, side4, sol, plafond);
+        checkboxes.setAlignment(Pos.CENTER_LEFT);
+        checkboxes.setPadding(new Insets(20));
+
+        // Bouton pour fermer la fenetre
+        Button submitButton = new Button("Valider");
+        submitButton.setOnAction(e -> squareStage.close());
+
+        VBox controls = new VBox(10, checkboxes, submitButton);
+        controls.setAlignment(Pos.CENTER);
+
+        HBox layout = new HBox(20, totsquare, controls);
+        layout.setPadding(new Insets(20));
+
+        Scene scene = new Scene(layout, 400, 300);
+        squareStage.setScene(scene);
+        squareStage.initModality(Modality.APPLICATION_MODAL);
+        squareStage.show();
+    }
+    // fonction qui actualise le carre dans ChoixMur
+    private void drawSquare(GraphicsContext gc) {
+        gc.clearRect(0, 0, 100, 100);
+        gc.setStroke(topSelected ? Color.BLACK : Color.GREY);
+        gc.strokeLine(0, 0, 100, 0); // Top
+
+        gc.setStroke(rightSelected ? Color.BLACK : Color.GREY);
+        gc.strokeLine(100, 0, 100, 100); // Right
+
+        gc.setStroke(bottomSelected ? Color.BLACK : Color.GREY);
+        gc.strokeLine(100, 100, 0, 100); // Bottom
+
+        gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
+        gc.strokeLine(0, 100, 0, 0); // Left
+    }
+    // fonction qui demande le nombre de porte, fenetre et le revetement
+    private void DemandePorteFen(){
+        Stage inputStage = new Stage();
+        inputStage.setTitle("Input Window");
+
+        Label nbport = new Label("Nombre de porte sur ce mur?");
+        TextField inputPorte = new TextField();
+        Label nbfen = new Label("Nombre de fenetre sur ce mur?");
+        TextField inputFenetre = new TextField();
+        Label errorLabel = new Label();
+        Label Rev = new Label("Quelle revetement pour ce mur?");
+        ChoiceBox<String> rev = new ChoiceBox<>();
+        rev.getItems().addAll("Peinture:10,95","Carrelage:49,75","Lambris:50,60","Marbre:97,85","Crepi:67,80","Papier peint:32,90","Plaquettes de Parement:15,20","Peinture:77,30","Peinture:29,90","Carrelage:89,45","Lambris:42,50","Liege:25,40","Carrelage:10,35");
+        
+        // ca ne marche pas :(
+        //for (String revetement : getRevetementsPourMur()) {
+        //rev.getItems().add(revetement);}
+        
+        errorLabel.setTextFill(Color.RED);
+        Button fin = new Button("Valider");
+
+        fin.setOnAction(e -> {
+            if (isValidInput(inputPorte.getText()) && isValidInput(inputFenetre.getText())) {
+                inputStage.close();
+            } else {
+                errorLabel.setText("Entrer des nombres entiers valides.");
+            }
+        });
+
+        VBox choix = new VBox(10, nbport, inputPorte, nbfen, inputFenetre, errorLabel, Rev, rev, fin);
+        choix.setAlignment(Pos.CENTER);
+        choix.setPadding(new Insets(20));
+
+        Scene scene = new Scene(choix, 400, 300);
+        inputStage.setScene(scene);
+        inputStage.initModality(Modality.APPLICATION_MODAL);
+        inputStage.show();
+    }
+    // demande le revetement du sol
+    public void revsol(){
+    // Create a new Stage (window)
+        Stage newWindow = new Stage();
+        newWindow.setTitle("revetement pour pour sol");
+           // instruction
+        Label instruction = new Label("revetement pour pour le sol");
+        // Create a ChoiceBox and add some choices
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll("Carrelage : 49,75", "Lambris : 50,60", "Marbre : 97,85","Carrelage : 89,45","Lambris : 42,50","Parquet : 46,36","Vinyle Lino : 23,55","Moquette : 48,10","Stratifie : 31,99","Gazon : 17,95","Liege : 33,90","Carrelage : 10,35");
+
+        // Create a Button to close the new window
+        Button closeButton = new Button("Valide");
+        closeButton.setOnAction(event -> newWindow.close());
+
+        // Center the close button using an HBox
+        HBox hbox = new HBox(closeButton);
+        hbox.setAlignment(Pos.CENTER);
+
+        // Layout for the new window
+        VBox vbox = new VBox(instruction, choiceBox, hbox);
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
+
+        // Set the Scene for the new window
+        Scene scene = new Scene(vbox, 200, 150);
+        newWindow.setScene(scene);
+
+        // Make the new window modal to block input to other windows
+        newWindow.initModality(Modality.APPLICATION_MODAL);
+
+        // Show the new window
+        newWindow.show();   
+    }
+    //demande le revetement du plafond
+    public void revplaf(){
+    // Create a new Stage (window)
+        Stage newWindow = new Stage();
+        newWindow.setTitle("revetement pour pour plafond");
+        // Text explicatif
+        Label instruction = new Label("revetement pour pour le plafond");
+        // Create a ChoiceBox and add some choices
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll("Peinture : 10,95", "Lambris : 50,60", "Peinture : 77,30","Peinture : 29,90");
+
+        // Create a Button to close the new window
+        Button closeButton = new Button("Valide");
+        closeButton.setOnAction(event -> newWindow.close());
+
+        // Center the close button using an HBox
+        HBox hbox = new HBox(closeButton);
+        hbox.setAlignment(Pos.CENTER);
+
+        // Layout for the new window
+        VBox vbox = new VBox(instruction, choiceBox, hbox);
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
+
+        // Set the Scene for the new window
+        Scene scene = new Scene(vbox, 200, 150);
+        newWindow.setScene(scene);
+
+        // Make the new window modal to block input to other windows
+        newWindow.initModality(Modality.APPLICATION_MODAL);
+
+        // Show the new window
+        newWindow.show();
+        
+    }
+    //Sauvgarde les coins dans le fichier text
+    public void sauvgardecoin(double x, double y, int nbcoin){
      try(BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))){
          bw.write("Coin;"+nbcoin+";"+x+";"+y+"\n");
          bw.close();
@@ -234,98 +445,9 @@ public class App extends Application {
         }
     }
      */
-        private void Choixmurs() {
-        Stage squareStage = new Stage();
-        squareStage.setTitle("Square Window");
-
-        // Creer un Canvas et un GraphicsContext pour dessiner
-        Canvas canvas = new Canvas(100, 100);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        // dessin un carré de base
-        drawSquare(gc);
         
-        //Nommes les côtés du carré
-        Text Side1 = new Text("1");
-        Text Side2 = new Text("4");
-        Text Side3 = new Text("2");
-        Text Side4 = new Text("3");
-        
-        //associe le bon nom a chaque côté du carré
-        VBox vertsquare = new VBox (10,Side1, canvas, Side4);
-        vertsquare.setAlignment(Pos.CENTER);
-        HBox totsquare = new HBox (10, Side2, vertsquare, Side3);
-        totsquare.setAlignment(Pos.CENTER);
 
-        // Texte and CheckBoxes
-        Text instructionText = new Text("Saisisser les informations sur les murs:");
-        CheckBox side1 = new CheckBox("1");
-        CheckBox side2 = new CheckBox("2");
-        CheckBox side3 = new CheckBox("3");
-        CheckBox side4 = new CheckBox("4");
-        CheckBox sol = new CheckBox("Sol");
-        CheckBox plafond = new CheckBox("Plafond");
-        side1.setOnAction(e -> {
-            topSelected = side1.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side2.setOnAction(e -> {
-            rightSelected = side2.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side3.setOnAction(e -> {
-            bottomSelected = side3.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        side4.setOnAction(e -> {
-            leftSelected = side4.isSelected();
-            drawSquare(gc);
-            DemandePorteFen();
-        });
-        sol.setOnAction(e -> {
-            revsol();
-        });
-        plafond.setOnAction(e -> {
-            revplaf();
-        });
-        
-        VBox checkboxes = new VBox(10, instructionText, side1, side2, side3, side4, sol, plafond);
-        checkboxes.setAlignment(Pos.CENTER_LEFT);
-        checkboxes.setPadding(new Insets(20));
-
-        // Bouton pour fermer la fenetre
-        Button submitButton = new Button("Valider");
-        submitButton.setOnAction(e -> squareStage.close());
-
-        VBox controls = new VBox(10, checkboxes, submitButton);
-        controls.setAlignment(Pos.CENTER);
-
-        HBox layout = new HBox(20, totsquare, controls);
-        layout.setPadding(new Insets(20));
-
-        Scene scene = new Scene(layout, 400, 300);
-        squareStage.setScene(scene);
-        squareStage.initModality(Modality.APPLICATION_MODAL);
-        squareStage.show();
-    }
-
-    private void drawSquare(GraphicsContext gc) {
-        gc.clearRect(0, 0, 100, 100);
-        gc.setStroke(topSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(0, 0, 100, 0); // Top
-
-        gc.setStroke(rightSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(100, 0, 100, 100); // Right
-
-        gc.setStroke(bottomSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(100, 100, 0, 100); // Bottom
-
-        gc.setStroke(leftSelected ? Color.BLACK : Color.GREY);
-        gc.strokeLine(0, 100, 0, 0); // Left
-    }
+    
     /*
     public static List<String> getRevetementsPourMur() {
         List<String> revetementsPourMur = new ArrayList<>();
@@ -344,111 +466,7 @@ public class App extends Application {
         return revetementsPourMur;
     }
 */
-    public void revsol(){
-    // Create a new Stage (window)
-        Stage newWindow = new Stage();
-        newWindow.setTitle("revetement pour pour sol");
-           // instruction
-        Label instruction = new Label("revetement pour pour le sol");
-        // Create a ChoiceBox and add some choices
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Carrelage : 49,75", "Lambris : 50,60", "Marbre : 97,85","Carrelage : 89,45","Lambris : 42,50","Parquet : 46,36","Vinyle Lino : 23,55","Moquette : 48,10","Stratifie : 31,99","Gazon : 17,95","Liege : 33,90","Carrelage : 10,35");
-
-        // Create a Button to close the new window
-        Button closeButton = new Button("Valide");
-        closeButton.setOnAction(event -> newWindow.close());
-
-        // Center the close button using an HBox
-        HBox hbox = new HBox(closeButton);
-        hbox.setAlignment(Pos.CENTER);
-
-        // Layout for the new window
-        VBox vbox = new VBox(instruction, choiceBox, hbox);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
-
-        // Set the Scene for the new window
-        Scene scene = new Scene(vbox, 200, 150);
-        newWindow.setScene(scene);
-
-        // Make the new window modal to block input to other windows
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-
-        // Show the new window
-        newWindow.show();
-        
-    }
-    public void revplaf(){
-    // Create a new Stage (window)
-        Stage newWindow = new Stage();
-        newWindow.setTitle("revetement pour pour plafond");
-        // Text explicatif
-        Label instruction = new Label("revetement pour pour le plafond");
-        // Create a ChoiceBox and add some choices
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Peinture : 10,95", "Lambris : 50,60", "Peinture : 77,30","Peinture : 29,90");
-
-        // Create a Button to close the new window
-        Button closeButton = new Button("Valide");
-        closeButton.setOnAction(event -> newWindow.close());
-
-        // Center the close button using an HBox
-        HBox hbox = new HBox(closeButton);
-        hbox.setAlignment(Pos.CENTER);
-
-        // Layout for the new window
-        VBox vbox = new VBox(instruction, choiceBox, hbox);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER); // Center the VBox as well
-
-        // Set the Scene for the new window
-        Scene scene = new Scene(vbox, 200, 150);
-        newWindow.setScene(scene);
-
-        // Make the new window modal to block input to other windows
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-
-        // Show the new window
-        newWindow.show();
-        
-    }
-    private void DemandePorteFen(){
-        Stage inputStage = new Stage();
-        inputStage.setTitle("Input Window");
-
-        Label nbport = new Label("Nombre de porte sur ce mur?");
-        TextField inputPorte = new TextField();
-        Label nbfen = new Label("Nombre de fenetre sur ce mur?");
-        TextField inputFenetre = new TextField();
-        Label errorLabel = new Label();
-        Label Rev = new Label("Quelle revetement pour ce mur?");
-        ChoiceBox<String> rev = new ChoiceBox<>();
-        rev.getItems().addAll("Peinture:10,95","Carrelage:49,75","Lambris:50,60","Marbre:97,85","Crepi:67,80","Papier peint:32,90","Plaquettes de Parement:15,20","Peinture:77,30","Peinture:29,90","Carrelage:89,45","Lambris:42,50","Liege:25,40","Carrelage:10,35");
-        
-        // ca ne marche pas :(
-        //for (String revetement : getRevetementsPourMur()) {
-        //rev.getItems().add(revetement);}
-        
-        errorLabel.setTextFill(Color.RED);
-        Button fin = new Button("Valider");
-
-        fin.setOnAction(e -> {
-            if (isValidInput(inputPorte.getText()) && isValidInput(inputFenetre.getText())) {
-                inputStage.close();
-            } else {
-                errorLabel.setText("Entrer des nombres entiers valides.");
-            }
-        });
-
-        VBox choix = new VBox(10, nbport, inputPorte, nbfen, inputFenetre, errorLabel, Rev, rev, fin);
-        choix.setAlignment(Pos.CENTER);
-        choix.setPadding(new Insets(20));
-
-        Scene scene = new Scene(choix, 400, 300);
-        inputStage.setScene(scene);
-        inputStage.initModality(Modality.APPLICATION_MODAL);
-        inputStage.show();
-    }
+    
 
     private boolean isValidInput(String input) {
         if (input == null || input.isEmpty()) {
