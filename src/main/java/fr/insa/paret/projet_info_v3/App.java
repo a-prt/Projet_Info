@@ -62,10 +62,7 @@ public class App extends Application {
         Label devis = new Label ("prix du batiment "+prixtot+"€");
         
         Button button1 = new Button("Supprimer");
-        button1.setOnAction(e -> {
-            clearCanvas();
-            devis.setText("prix du batiment "+prixtot+"€");
-                });
+        button1.setOnAction(e -> clearCanvas());
 
         Button button2 = new Button("Configurer le bâtiment");
         button2.setOnAction(e -> {
@@ -162,7 +159,7 @@ public class App extends Application {
 
             grid.getChildren().addAll(labelNbAppartements, inputNbAppartements, submitButton);
 
-            Scene scene = new Scene(grid, 300, 150);
+            Scene scene = new Scene(grid, 450, 150);
             inputStage.setScene(scene);
             inputStage.initModality(Modality.APPLICATION_MODAL);
             inputStage.showAndWait();
@@ -201,7 +198,7 @@ public class App extends Application {
 
             grid.getChildren().addAll(labelNbPieces, inputNbPieces, submitButton);
 
-            Scene scene = new Scene(grid, 300, 150);
+            Scene scene = new Scene(grid, 400, 150);
             inputStage.setScene(scene);
             inputStage.initModality(Modality.APPLICATION_MODAL);
             inputStage.showAndWait();
