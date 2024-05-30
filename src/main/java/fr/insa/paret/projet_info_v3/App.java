@@ -24,11 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import static javafx.application.Application.launch;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.text.Text;
 
 
 public class App extends Application {
@@ -62,14 +58,22 @@ public class App extends Application {
 
         canvas = new Canvas(400, 400);
         gc = canvas.getGraphicsContext2D();
-
-        Button button1 = new Button("Supprimer");
-        button1.setOnAction(e -> clearCanvas());
-
-        Button button2 = new Button("Configurer le bâtiment");
-        button2.setOnAction(e -> promptBuildingDetails());
         
         Label devis = new Label ("prix du batiment "+prixtot+"€");
+        
+        Button button1 = new Button("Supprimer");
+        button1.setOnAction(e -> {
+            clearCanvas();
+            devis.setText("prix du batiment "+prixtot+"€");
+                });
+
+        Button button2 = new Button("Configurer le bâtiment");
+        button2.setOnAction(e -> {
+            promptBuildingDetails();
+            devis.setText("prix du batiment "+prixtot+"€");
+        });
+        
+        
 
         VBox buttons = new VBox(10, button1, button2, devis);
         buttons.setAlignment(Pos.CENTER);
@@ -339,7 +343,7 @@ public class App extends Application {
 
         grid.getChildren().addAll(labelX1, inputX1, labelY1, inputY1, labelX2, inputX2, labelY2, inputY2, labelNbPortes, inputNbPortes, labelNbFenetres, inputNbFenetres, labelRevMurTop, inputRevMurTop, labelRevMurRight, inputRevMurRight, labelRevMurBottom, inputRevMurBottom, labelRevMurLeft, inputRevMurLeft, labelRevSol, inputRevSol, labelRevPlafond, inputRevPlafond, submitButton);
 
-        Scene scene = new Scene(grid, 500, 400);
+        Scene scene = new Scene(grid, 500, 600);
         inputStage.setScene(scene);
         inputStage.initModality(Modality.APPLICATION_MODAL);
         inputStage.showAndWait();
