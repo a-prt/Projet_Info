@@ -91,7 +91,7 @@ public class App extends Application {
             e.printStackTrace();
         }
     }
-
+//demand le nombre de niveau et sauvgarde
     private void promptBuildingDetails() {
         Stage inputStage = new Stage();
         inputStage.setTitle("Configurer le bâtiment");
@@ -127,7 +127,7 @@ public class App extends Application {
         inputStage.initModality(Modality.APPLICATION_MODAL);
         inputStage.showAndWait();
     }
-
+//combien d'appartement par niveau
     private void promptLevelDetails(int nbNiveaux) {
         for (int i = 0; i < nbNiveaux; i++) {
             currentLevel = i + 1;
@@ -162,10 +162,11 @@ public class App extends Application {
             Scene scene = new Scene(grid, 450, 150);
             inputStage.setScene(scene);
             inputStage.initModality(Modality.APPLICATION_MODAL);
+            
             inputStage.showAndWait();
         }
     }
-
+//combien de piece dans l'apartement
     private void promptApartmentDetails(int levelIndex, int nbAppartements) {
         for (int i = 0; i < nbAppartements; i++) {
             currentApartment = i + 1;
@@ -201,9 +202,11 @@ public class App extends Application {
             Scene scene = new Scene(grid, 400, 150);
             inputStage.setScene(scene);
             inputStage.initModality(Modality.APPLICATION_MODAL);
+            //ici
             inputStage.showAndWait();
         }
     }
+    //calcule le prix d'un mur
     private double PrixMur (double X1, double Y1, double X2, double Y2, int nbporte, int nbfen, int idrev){
        double longueur = Math.sqrt(Math.pow(X2 - X1, 2)+ Math.pow(Y2- Y1, 2));
         double hauteur = 2.5; //quelle hauteur pour le mur?
@@ -224,6 +227,7 @@ public class App extends Application {
         }
         return prix;
     }
+    //calcul le prix d'un surface (sol ou plafond)
     private double PrixSurf (double x1, double y1, double x2, double y2, int idrev){
         double prix =Math.abs(x1-x2)*Math.abs(y1-y2);
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
@@ -239,12 +243,14 @@ public class App extends Application {
         }
         return prix;
     }
+    //createur de piece
     private void createPieces(int levelIndex, int apartmentIndex, int nbPieces) {
         for (int i = 0; i < nbPieces; i++) {
             promptPieceDetails(levelIndex, apartmentIndex, i);
         }
     }
 
+    // fenetre pour rentrer les info de la piece
     private void promptPieceDetails(int levelIndex, int apartmentIndex, int pieceIndex) {
         Stage inputStage = new Stage();
         inputStage.setTitle("Détails de la pièce " + (pieceIndex + 1));
@@ -343,9 +349,10 @@ public class App extends Application {
         Scene scene = new Scene(grid, 500, 600);
         inputStage.setScene(scene);
         inputStage.initModality(Modality.APPLICATION_MODAL);
+        
         inputStage.showAndWait();
     }
-
+    // enregistre des detail de la piece
     private void savePieceDetails(int levelIndex, int apartmentIndex, int pieceIndex, double x1, double y1, double x2, double y2, int nbPortes, int nbFenetres, int revMurTop, int revMurRight, int revMurBottom, int revMurLeft, int revSol, int revPlafond) {
         int currentPieceId = ++pieceId;
         int currentSolId = ++solId;
@@ -387,7 +394,7 @@ public class App extends Application {
 
         drawPiece(x1, y1, x2, y2);
     }
-
+    //enregistre les detail d'un appartement
     private void saveAppartementDetails(int levelIndex, int apartmentIndex) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Appartement;" + apartmentIndex + ";" + levelIndex + ";");
@@ -401,7 +408,7 @@ public class App extends Application {
         appartements.add(appartementId);
         pieces.clear();
     }
-
+    //enregistre les detail d'un niveau
     private void saveNiveauDetails(int niveauIndex) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Niveau;" + niveauIndex + ";");
@@ -415,7 +422,7 @@ public class App extends Application {
         niveaux.add(niveauIndex);
         appartements.clear();
     }
-
+    //enregistre les details d'un batiment
     private void saveBatimentDetails() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Batiment;" + batimentId + ";");
@@ -428,7 +435,7 @@ public class App extends Application {
         }
         niveaux.clear();
     }
-
+    // dessin des piece sur le canvas
     private void drawPiece(double x1, double y1, double x2, double y2) {
         double x3 = x1;
         double y3 = y2;
@@ -457,141 +464,5 @@ public class App extends Application {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-    
-    public void devis(){
-        try {
-            // ici
-            Batiment batiment = parseBatimentFile("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt");
-            double totalCost = batiment.montantRevetement();
-            System.out.println("Total cost of all revêtements: " + totalCost);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private static Batiment parseBatimentFile(String filePath) throws Exception {
-        Map<Integer, Niveau> niveaux = new HashMap<>();
-        Map<Integer, Appartement> appartements = new HashMap<>();
-        Map<Integer, Piece> pieces = new HashMap<>();
-        Map<Integer, Mur> murs = new HashMap<>();
-        Map<Integer, Coin> coins = new HashMap<>();
-        Map<Integer, Sol> sols = new HashMap<>();
-        Map<Integer, Plafond> plafonds = new HashMap<>();
-        List<Niveau> batimentNiveaux = new ArrayList<>();
-        Batiment batiment = null;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                switch (parts[0]) {
-                    case "Batiment":
-                        int batimentId = Integer.parseInt(parts[1]);
-                        batimentNiveaux = new ArrayList<>();
-                        batiment = new Batiment(batimentId, batimentNiveaux);
-                        for (int i = 2; i < parts.length; i++) {
-                            int niveauId = Integer.parseInt(parts[i]);
-                            Niveau niveau = niveaux.get(niveauId);
-                            if (niveau != null) {
-                                batimentNiveaux.add(niveau);
-                            }
-                        }
-                        break;
-                    case "Niveau":
-                        int niveauId = Integer.parseInt(parts[1]);
-                        List<Appartement> niveauAppartements = new ArrayList<>();
-                        Niveau niveau = new Niveau(niveauId, niveauAppartements);
-                        niveaux.put(niveauId, niveau);
-                        for (int i = 2; i < parts.length; i++) {
-                            int appartId = Integer.parseInt(parts[i]);
-                            Appartement appartement = appartements.get(appartId);
-                            if (appartement != null) {
-                                niveauAppartements.add(appartement);
-                            }
-                        }
-                        break;
-                    case "Appartement":
-                        int appartId = Integer.parseInt(parts[1]);
-                        int idNiveauAppartement = Integer.parseInt(parts[2]);
-                        List<Piece> appartementPieces = new ArrayList<>();
-                        Appartement appartement = new Appartement(appartId, appartementPieces, idNiveauAppartement);
-                        appartements.put(appartId, appartement);
-                        for (int i = 3; i < parts.length; i++) {
-                            int pieceId = Integer.parseInt(parts[i]);
-                            Piece piece = pieces.get(pieceId);
-                            if (piece != null) {
-                                appartementPieces.add(piece);
-                            }
-                        }
-                        break;
-                    case "Piece":
-                        int pieceId = Integer.parseInt(parts[1]);
-                        int solId = Integer.parseInt(parts[2]);
-                        int plafondId = Integer.parseInt(parts[3]);
-                        List<Mur> pieceMurs = new ArrayList<>();
-                        for (int i = 4; i < parts.length; i++) {
-                            int murId = Integer.parseInt(parts[i]);
-                            Mur mur = murs.get(murId);
-                            if (mur != null) {
-                                pieceMurs.add(mur);
-                            }
-                        }
-                        Piece piece = new Piece(pieceId, pieceMurs, sols.get(solId), plafonds.get(plafondId), appartements.get(Integer.parseInt(parts[4])));
-                        pieces.put(pieceId, piece);
-                        break;
-                    case "Mur":
-                        int murId = Integer.parseInt(parts[1]);
-                        int coinDebutId = Integer.parseInt(parts[2]);
-                        int coinFinId = Integer.parseInt(parts[3]);
-                        int nbrePortes = Integer.parseInt(parts[4]);
-                        int nbreFenetres = Integer.parseInt(parts[5]);
-                        List<Revetement> murRevetements = new ArrayList<>();
-                        for (int i = 6; i < parts.length; i++) {
-                            int revetementId = Integer.parseInt(parts[i]);
-                            Revetement revetement = Revetement.createRevetementFromCatalogue(revetementId);
-                            murRevetements.add(revetement);
-                        }
-                        Mur mur = new Mur(murId, coins.get(coinDebutId), coins.get(coinFinId), nbrePortes, nbreFenetres, murRevetements);
-                        murs.put(murId, mur);
-                        break;
-                    case "Coin":
-                        int coinId = Integer.parseInt(parts[1]);
-                        double cx = Double.parseDouble(parts[2]);
-                        double cy = Double.parseDouble(parts[3]);
-                        Coin coin = new Coin(coinId, cx, cy);
-                        coins.put(coinId, coin);
-                        break;
-                    case "Sol":
-                        int Idsol = Integer.parseInt(parts[1]);
-                        List<Coin> solCoins = new ArrayList<>();
-                        for (int i = 2; i <= 5; i++) {
-                            solCoins.add(coins.get(Integer.parseInt(parts[i])));
-                        }
-                        List<Revetement> solRevetements = new ArrayList<>();
-                        int revSolId = Integer.parseInt(parts[6]);
-                        Revetement solRevetement = Revetement.createRevetementFromCatalogue(revSolId);
-                        solRevetements.add(solRevetement);
-                        Sol sol = new Sol(Idsol, solCoins, solRevetements);
-                        sols.put(Idsol, sol);
-                        break;
-                    case "Plafond":
-                        int Idplafond = Integer.parseInt(parts[1]);
-                        List<Coin> plafondCoins = new ArrayList<>();
-                        for (int i = 2; i <= 5; i++) {
-                            plafondCoins.add(coins.get(Integer.parseInt(parts[i])));
-                        }
-                        List<Revetement> plafondRevetements = new ArrayList<>();
-                        int revPlafondId = Integer.parseInt(parts[6]);
-                        Revetement plafondRevetement = Revetement.createRevetementFromCatalogue(revPlafondId);
-                        plafondRevetements.add(plafondRevetement);
-                        Plafond plafond = new Plafond(Idplafond, plafondCoins, plafondRevetements);
-                        plafonds.put(Idplafond, plafond);
-                        break;
-                }
-            }
-        }
-        return batiment;
     }
 }
