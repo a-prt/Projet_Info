@@ -44,6 +44,9 @@ public class App extends Application {
     private int appartementId = 0;
     private int niveauId = 0;
     private int batimentId = 1;
+    private double prixtot=0;
+    private double prixmur=0;
+    private double prixpiece=0;
 
     private List<Integer> niveaux = new ArrayList<>();
     private List<Integer> appartements = new ArrayList<>();
@@ -65,8 +68,10 @@ public class App extends Application {
 
         Button button2 = new Button("Configurer le bâtiment");
         button2.setOnAction(e -> promptBuildingDetails());
+        
+        Label devis = new Label ("prix du batiment "+prixtot+"€");
 
-        VBox buttons = new VBox(10, button1, button2);
+        VBox buttons = new VBox(10, button1, button2, devis);
         buttons.setAlignment(Pos.CENTER);
         HBox root = new HBox(10, canvas, buttons);
         root.setPadding(new Insets(10));
@@ -77,8 +82,9 @@ public class App extends Application {
     }
 
     private void clearCanvas() {
+        
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt"))) {
             bw.write("");
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,7 +203,41 @@ public class App extends Application {
             inputStage.showAndWait();
         }
     }
-
+    private double PrixMur (double X1, double Y1, double X2, double Y2, int nbporte, int nbfen, int idrev){
+       double longueur = Math.sqrt(Math.pow(X2 - X1, 2)+ Math.pow(Y2- Y1, 2));
+        double hauteur = 2.5; //quelle hauteur pour le mur?
+        double surfaceComplete = longueur*hauteur;
+        double surfacePorte = nbporte*(0.90*2.10);
+        double surfaceFenetre = nbfen*(1.20*1.20);
+        double prix =surfaceComplete-surfacePorte-surfaceFenetre;
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] t = line.split(";"); 
+                if(Integer.parseInt(t[0])==idrev){
+                    prix = prix*Integer.parseInt(t[5]);
+                }
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return prix;
+    }
+    private double PrixSurf (double x1, double y1, double x2, double y2, int idrev){
+        double prix =Math.abs(x1-x2)*Math.abs(y1-y2);
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("CatalogueRevetements.txt"))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] t = line.split(";"); 
+                if(Integer.parseInt(t[0])==idrev){
+                    prix = prix*Integer.parseInt(t[5]);
+                }
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return prix;
+    }
     private void createPieces(int levelIndex, int apartmentIndex, int nbPieces) {
         for (int i = 0; i < nbPieces; i++) {
             promptPieceDetails(levelIndex, apartmentIndex, i);
@@ -309,18 +349,16 @@ public class App extends Application {
         int currentPieceId = ++pieceId;
         int currentSolId = ++solId;
         int currentPlafondId = ++plafondId;
-        
         int idCoin1 = ++coinId;
         int idCoin2 = ++coinId;
         int idCoin3 = ++coinId;
         int idCoin4 = ++coinId;
-
         int idMurTop = ++murId;
         int idMurRight = ++murId;
         int idMurBottom = ++murId;
         int idMurLeft = ++murId;
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Coins;" + idCoin1 + ";" + x1 + ";" + y1 + "\n");
             bw.write("Coins;" + idCoin2 + ";" + x2 + ";" + y2 + "\n");
             bw.write("Coins;" + idCoin3 + ";" + x1 + ";" + y2 + "\n");
@@ -338,14 +376,19 @@ public class App extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        prixtot=prixtot+PrixMur(x1, y1, x2, y1, nbPortes, nbFenetres,revMurTop);
+        prixtot=prixtot+PrixMur(x2, y1, x2, y2, nbPortes, nbFenetres,revMurRight);
+        prixtot=prixtot+PrixMur(x2, y2, x1, y2, nbPortes, nbFenetres,revMurBottom);
+        prixtot=prixtot+PrixMur(x1, y2, x1, y1, nbPortes, nbFenetres,revMurLeft);
+        prixtot=prixtot+PrixSurf(x1, y1, x2, y2, revSol);
+        prixtot=prixtot+PrixSurf(x1, y1, x2, y2, revPlafond);
         pieces.add(currentPieceId);
 
         drawPiece(x1, y1, x2, y2);
     }
 
     private void saveAppartementDetails(int levelIndex, int apartmentIndex) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Appartement;" + apartmentIndex + ";" + levelIndex + ";");
             for (Integer piece : pieces) {
                 bw.write(piece + ";");
@@ -359,7 +402,7 @@ public class App extends Application {
     }
 
     private void saveNiveauDetails(int niveauIndex) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\Projet_Info\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt", true))) {
             bw.write("Niveau;" + niveauIndex + ";");
             for (Integer appartement : appartements) {
                 bw.write(appartement + ";");
@@ -417,13 +460,15 @@ public class App extends Application {
     
     public void devis(){
         try {
-            Batiment batiment = parseBatimentFile("C:\\Users\\Utilisateur\\Documents\\NetBeansProjects\\mavenproject2\\src\\main\\java\\fr\\insa\\paret\\mavenproject2\\batiment.txt");
+            // ici
+            Batiment batiment = parseBatimentFile("C:\\Users\\jeanb\\Documents\\Netbeansproject 2\\Projet_Info_V3\\src\\main\\java\\fr\\insa\\paret\\projet_info_v3\\batiment.txt");
             double totalCost = batiment.montantRevetement();
             System.out.println("Total cost of all revêtements: " + totalCost);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private static Batiment parseBatimentFile(String filePath) throws Exception {
         Map<Integer, Niveau> niveaux = new HashMap<>();
